@@ -1,0 +1,11 @@
+{
+  "Key": "[BackThisUp v1.0 Configuration File]",
+  "WorkItems": [
+    {
+      "Priority": 9,
+      "Type": "<ThisFolder>",
+      "Source": null,
+      "Target": "\\Dev\\HexagonMapModule\\"
+    }
+  ]
+}
