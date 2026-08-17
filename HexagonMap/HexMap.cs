@@ -43,6 +43,7 @@ namespace HexagonMap
 
             var hexCell = new HexCell(coordinate);
             var cell = factory.CreateCell(hexCell, createContext);
+            persistence.Write(cell);
 
             Debug.Assert(cell.HexCell == hexCell,
                 "HexCell provided to factory method was not used " +

@@ -17,10 +17,10 @@ namespace HexagonMapTests
             MapData = new InMemoryHexMapPersistence<TestCell>();
 
             Factory = new Mock<IUserCellFactory<TestCell, TestCreateContext>>();
-            Factory.Setup(f => f.CreateCell(It.IsAny<IHexCell>(), It.IsAny<TestCreateContext>())).Callback(new Func<IHexCell, TestCreateContext, TestCell>((cell, context) =>
+            Factory.Setup(f => f.CreateCell(It.IsAny<IHexCell>(), It.IsAny<TestCreateContext>())).Returns(new Func<IHexCell, TestCreateContext, TestCell>((cell, context) =>
             {
                 return new TestCell
-                { 
+                {
                     HexCell = cell,
                     TestData = context.NewCellTestData
                 };
@@ -30,7 +30,7 @@ namespace HexagonMapTests
             Persistence.Setup(f => f.Open()).Callback(() => MapData.Open());
             Persistence.Setup(f => f.Close()).Callback(() => MapData.Close());
             
-            Persistence.Setup(f => f.Read(It.IsAny<HexMapCoordinate>())).Callback(new Func<HexMapCoordinate, TestCell?>(c =>
+            Persistence.Setup(f => f.Read(It.IsAny<HexMapCoordinate>())).Returns(new Func<HexMapCoordinate, TestCell?>(c =>
             {
                 return MapData.Read(c);
             }));
