@@ -10,9 +10,9 @@
         IHexCell HexCell { get; }
     }
 
-    public class HexCell : IHexCell
+    internal class HexCell : IHexCell
     {
-        public HexCell(HexMapCoordinate coordinate)
+        internal HexCell(HexMapCoordinate coordinate)
         {
             Coordinate = coordinate;
         }

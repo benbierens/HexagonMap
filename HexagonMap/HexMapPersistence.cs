@@ -8,6 +8,7 @@
 
         TuserCell? Read(HexMapCoordinate coordinate);
         void Write(TuserCell cell);
+        void Delete(HexMapCoordinate coordinate);
     }
 
     public class InMemoryHexMapPersistence<TuserCell> : IHexMapPersistence<TuserCell>
@@ -39,6 +40,12 @@
             var c = cell.HexCell.Coordinate;
             if (!cells.ContainsKey(c.X)) cells.Add(c.X, new Dictionary<int, TuserCell>());
             cells[c.X][c.Y] = cell;
+        }
+
+        public void Delete(HexMapCoordinate c)
+        {
+            if (!cells.ContainsKey(c.X)) return;
+            cells[c.X].Remove(c.Y);
         }
     }
 }

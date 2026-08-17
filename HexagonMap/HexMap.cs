@@ -2,45 +2,73 @@
 
 namespace HexagonMap
 {
-    public interface IHexMap<TuserCell>
-        where TuserCell : class, IHasHexCell
+    public interface IHexMap<TUserCell, TUserCreateContext>
+        where TUserCell : class, IHasHexCell
+        where TUserCreateContext : notnull
     {
-        TuserCell GetCell(int x, int y);
-        TuserCell GetCell(HexMapCoordinate coordinate);
+        TUserCell CreateCell(int x, int y, TUserCreateContext createContext);
+        TUserCell CreateCell(HexMapCoordinate coordinate, TUserCreateContext createContext);
+
+        TUserCell? GetCell(int x, int y);
+        TUserCell? GetCell(HexMapCoordinate coordinate);
+
+        void DeleteCell(int x, int y);
+        void DeleteCell(HexMapCoordinate coordinate);
     }
 
-    public class HexMap<TuserCell> : IHexMap<TuserCell>
-        where TuserCell : class, IHasHexCell
+    public class HexMap<TUserCell, TUserCreateContext> : IHexMap<TUserCell, TUserCreateContext>
+        where TUserCell : class, IHasHexCell
+        where TUserCreateContext : notnull
     {
-        private readonly IHexMapPersistence<TuserCell> persistence;
-        private readonly IUserCellFactory<TuserCell> factory;
+        private readonly IHexMapPersistence<TUserCell> persistence;
+        private readonly IUserCellFactory<TUserCell, TUserCreateContext> factory;
 
         public HexMap(
-            IHexMapPersistence<TuserCell> persistence,
-            IUserCellFactory<TuserCell> factory
+            IHexMapPersistence<TUserCell> persistence,
+            IUserCellFactory<TUserCell, TUserCreateContext> factory
         )
         {
             this.persistence = persistence;
             this.factory = factory;
         }
 
-        public TuserCell GetCell(int x, int y)
+        public TUserCell CreateCell(int x, int y, TUserCreateContext createContext)
+        {
+            return CreateCell(new HexMapCoordinate(x, y), createContext);
+        }
+
+        public TUserCell CreateCell(HexMapCoordinate coordinate, TUserCreateContext createContext)
+        {
+            Debug.Assert(GetCell(coordinate) == null);
+
+            var hexCell = new HexCell(coordinate);
+            var cell = factory.CreateCell(hexCell, createContext);
+
+            Debug.Assert(cell.HexCell == hexCell,
+                "HexCell provided to factory method was not used " +
+                "for field 'HexCell' of user type.");
+
+            return cell;
+        }
+
+        public TUserCell? GetCell(int x, int y)
         {
             return GetCell(new HexMapCoordinate(x, y));
         }
 
-        public TuserCell GetCell(HexMapCoordinate c)
+        public TUserCell? GetCell(HexMapCoordinate c)
         {
-            var cell = persistence.Read(c);
-            if (cell == null)
-            {
-                var hexCell = new HexCell(c);
-                cell = factory.CreateCell(hexCell);
-                Debug.Assert(cell.HexCell == hexCell,
-                    "HexCell provided to factory method was not used " +
-                    "for field 'HexCell' of user type.");
-            }
-            return cell;
+            return persistence.Read(c);
+        }
+
+        public void DeleteCell(int x, int y)
+        {
+            DeleteCell(new HexMapCoordinate(x, y));
+        }
+
+        public void DeleteCell(HexMapCoordinate coordinate)
+        {
+            persistence.Delete(coordinate);
         }
     }
 }

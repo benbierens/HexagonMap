@@ -6,20 +6,24 @@ namespace HexagonMapTests
 {
     public abstract class BaseTest
     {
-        protected Mock<IUserCellFactory<TestCell>> Factory { get; private set; } = null!;
+        protected Mock<IUserCellFactory<TestCell, TestCreateContext>> Factory { get; private set; } = null!;
         protected Mock<IHexMapPersistence<TestCell>> Persistence { get; private set; } = null!;
         protected InMemoryHexMapPersistence<TestCell> MapData { get; private set; } = null!;
-        protected HexMap<TestCell> Map { get; private set; } = null!;
+        protected HexMap<TestCell, TestCreateContext> Map { get; private set; } = null!;
 
         [SetUp]
         public void Setup()
         {
             MapData = new InMemoryHexMapPersistence<TestCell>();
 
-            Factory = new Mock<IUserCellFactory<TestCell>>();
-            Factory.Setup(f => f.CreateCell(It.IsAny<IHexCell>())).Callback(new Func<IHexCell, TestCell>(c =>
+            Factory = new Mock<IUserCellFactory<TestCell, TestCreateContext>>();
+            Factory.Setup(f => f.CreateCell(It.IsAny<IHexCell>(), It.IsAny<TestCreateContext>())).Callback(new Func<IHexCell, TestCreateContext, TestCell>((cell, context) =>
             {
-                return new TestCell { HexCell = c };
+                return new TestCell
+                { 
+                    HexCell = cell,
+                    TestData = context.NewCellTestData
+                };
             }));
 
             Persistence = new Mock<IHexMapPersistence<TestCell>>();
@@ -36,7 +40,7 @@ namespace HexagonMapTests
                 MapData.Write(c);
             }));
 
-            Map = new HexMap<TestCell>(Persistence.Object, Factory.Object);
+            Map = new HexMap<TestCell, TestCreateContext>(Persistence.Object, Factory.Object);
         }
 
         [TearDown]
