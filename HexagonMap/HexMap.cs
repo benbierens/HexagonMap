@@ -2,54 +2,45 @@
 
 namespace HexagonMap
 {
-    public interface IHexMap<Tc, TuserCell>
-        where Tc : notnull
-        where TuserCell : class, IHasHexCell<Tc>
+    public interface IHexMap<TuserCell>
+        where TuserCell : class, IHasHexCell
     {
-        TuserCell GetCell(ICoordinate<Tc> coordinate);
+        TuserCell GetCell(int x, int y);
+        TuserCell GetCell(HexMapCoordinate coordinate);
     }
 
-    public class HexMap<Tc, TuserCell> : IHexMap<Tc, TuserCell>
-        where Tc : notnull
-        where TuserCell : class, IHasHexCell<Tc>
+    public class HexMap<TuserCell> : IHexMap<TuserCell>
+        where TuserCell : class, IHasHexCell
     {
-        private readonly IMath<Tc> math;
-        private readonly IHexMapPersistence<Tc, TuserCell> persistence;
-        private readonly IUserCellFactory<Tc, TuserCell> factory;
-        private readonly ICoordinateTransformer<Tc> transformer;
+        private readonly IHexMapPersistence<TuserCell> persistence;
+        private readonly IUserCellFactory<TuserCell> factory;
 
         public HexMap(
-            IMath<Tc> math,
-            IHexMapPersistence<Tc, TuserCell> persistence,
-            IUserCellFactory<Tc, TuserCell> factory,
-            ICoordinateTransformer<Tc> transformer
+            IHexMapPersistence<TuserCell> persistence,
+            IUserCellFactory<TuserCell> factory
         )
         {
-            this.math = math;
             this.persistence = persistence;
             this.factory = factory;
-            this.transformer = transformer;
         }
 
-        public TuserCell GetCell(ICoordinate<Tc> coordinate)
+        public TuserCell GetCell(int x, int y)
         {
-            var c = transformer.Transform(coordinate);
-            var p = ToPosition(c);
-            var cell = persistence.Read(p);
+            return GetCell(new HexMapCoordinate(x, y));
+        }
+
+        public TuserCell GetCell(HexMapCoordinate c)
+        {
+            var cell = persistence.Read(c);
             if (cell == null)
             {
-                var hexCell = new HexCell<Tc>(p);
+                var hexCell = new HexCell(c);
                 cell = factory.CreateCell(hexCell);
                 Debug.Assert(cell.HexCell == hexCell,
                     "HexCell provided to factory method was not used " +
                     "for field 'HexCell' of user type.");
             }
             return cell;
-        }
-
-        private IHexCellPosition<Tc> ToPosition(ICoordinate<Tc> coordinate)
-        {
-            return new HexCellPosition<Tc>(math, coordinate);
         }
     }
 }

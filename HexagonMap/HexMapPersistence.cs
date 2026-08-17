@@ -1,21 +1,19 @@
 ﻿namespace HexagonMap
 {
-    public interface IHexMapPersistence<Tc, TuserCell>
-        where Tc : notnull
-        where TuserCell : class, IHasHexCell<Tc>
+    public interface IHexMapPersistence<TuserCell>
+        where TuserCell : class, IHasHexCell
     {
         void Open();
         void Close();
 
-        TuserCell? Read(IHexCellPosition<Tc> position);
+        TuserCell? Read(HexMapCoordinate coordinate);
         void Write(TuserCell cell);
     }
 
-    public class InMemoryHexMapPersistence<Tc, TuserCell> : IHexMapPersistence<Tc, TuserCell>
-        where Tc : notnull
-        where TuserCell : class, IHasHexCell<Tc>
+    public class InMemoryHexMapPersistence<TuserCell> : IHexMapPersistence<TuserCell>
+        where TuserCell : class, IHasHexCell
     {
-        private readonly Dictionary<Tc, Dictionary<Tc, TuserCell>> cells = new();
+        private readonly Dictionary<int, Dictionary<int, TuserCell>> cells = new();
 
         public void Open()
         {
@@ -25,9 +23,8 @@
         {
         }
 
-        public TuserCell? Read(IHexCellPosition<Tc> position)
+        public TuserCell? Read(HexMapCoordinate c)
         {
-            var c = position.Coordinate;
             if (!cells.ContainsKey(c.X)) return null;
             var dim = cells[c.X];
             if (dim.TryGetValue(c.Y, out var cell))
@@ -39,8 +36,8 @@
 
         public void Write(TuserCell cell)
         {
-            var c = cell.HexCell.Position.Coordinate;
-            if (!cells.ContainsKey(c.X)) cells.Add(c.X, new Dictionary<Tc, TuserCell>());
+            var c = cell.HexCell.Coordinate;
+            if (!cells.ContainsKey(c.X)) cells.Add(c.X, new Dictionary<int, TuserCell>());
             cells[c.X][c.Y] = cell;
         }
     }

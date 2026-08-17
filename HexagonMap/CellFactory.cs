@@ -1,29 +1,26 @@
 ﻿namespace HexagonMap
 {
-    public interface IUserCellFactory<Tc, TuserCell>
-        where Tc : notnull
-        where TuserCell : class, IHasHexCell<Tc>
+    public interface IUserCellFactory<TuserCell>
+        where TuserCell : class, IHasHexCell
     {
-        TuserCell CreateCell(IHexCell<Tc> hexCell);
+        TuserCell CreateCell(IHexCell hexCell);
     }
 
-    public class EmptyUserCellFactory<Tc> : IUserCellFactory<Tc, BaseUserCell<Tc>>
-        where Tc : notnull
+    public class EmptyUserCellFactory : IUserCellFactory<BaseUserCell>
     {
-        public BaseUserCell<Tc> CreateCell(IHexCell<Tc> hexCell)
+        public BaseUserCell CreateCell(IHexCell hexCell)
         {
-            return new BaseUserCell<Tc>(hexCell);
+            return new BaseUserCell(hexCell);
         }
     }
 
-    public class BaseUserCell<Tc> : IHasHexCell<Tc>
-        where Tc : notnull
+    public class BaseUserCell : IHasHexCell
     {
-        public BaseUserCell(IHexCell<Tc> hexCell)
+        public BaseUserCell(IHexCell hexCell)
         {
             HexCell = hexCell;
         }
 
-        public IHexCell<Tc> HexCell { get; }
+        public IHexCell HexCell { get; }
     }
 }
