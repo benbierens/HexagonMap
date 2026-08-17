@@ -24,10 +24,11 @@ namespace HexagonMapTests
         [Test]
         [Combinatorial]
         public void LineSanityCheck(
-            [Values(0, 1, 2, 3, 4, 5)] Direction direction,
+            [Values(0, 1, 2, 3, 4, 5)] int d,
             [Values(1, 3, 5)] int steps
         )
         {
+            Direction direction = d;
             var here = cell;
 
             // We take 'steps' steps in direction 'direction'.
@@ -49,7 +50,7 @@ namespace HexagonMapTests
         [Test]
         [Combinatorial]
         public void CircleSanityCheck(
-            [Values(0, 1, 2, 3, 4, 5)] Direction offset
+            [Values(0, 1, 2, 3, 4, 5)] int offset
         )
         {
             var here = cell;

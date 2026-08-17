@@ -11,7 +11,12 @@
             { 4, 1 },
             { 5, 2 },
         };
-        protected readonly byte value;
+        private readonly byte value;
+
+        public Direction(int value)
+            : this(Convert.ToByte(value))
+        {
+        }
 
         public Direction(byte value)
         {
@@ -28,6 +33,7 @@
         public Direction Reverse => reverses[this];
 
         public static implicit operator Direction(byte value) { return new Direction(value); }
+        public static implicit operator Direction(int value) { return new Direction(value); }
         public static implicit operator byte(Direction direction) { return direction.value; }
 
         public static bool operator <(Direction a, Direction b)
