@@ -13,16 +13,19 @@ namespace HexagonMap
         where Tc : notnull
         where TuserCell : class, IHasHexCell<Tc>
     {
+        private readonly IMath<Tc> math;
         private readonly IHexMapPersistence<Tc, TuserCell> persistence;
         private readonly IUserCellFactory<Tc, TuserCell> factory;
         private readonly ICoordinateTransformer<Tc> transformer;
 
         public HexMap(
+            IMath<Tc> math,
             IHexMapPersistence<Tc, TuserCell> persistence,
             IUserCellFactory<Tc, TuserCell> factory,
             ICoordinateTransformer<Tc> transformer
         )
         {
+            this.math = math;
             this.persistence = persistence;
             this.factory = factory;
             this.transformer = transformer;
@@ -31,6 +34,7 @@ namespace HexagonMap
         public TuserCell GetCell(ICoordinate<Tc> coordinate)
         {
             var c = transformer.Transform(coordinate);
+            var p = ToPosition(c);
             var cell = persistence.Read(p);
             if (cell == null)
             {
@@ -41,6 +45,11 @@ namespace HexagonMap
                     "for field 'HexCell' of user type.");
             }
             return cell;
+        }
+
+        private IHexCellPosition<Tc> ToPosition(ICoordinate<Tc> coordinate)
+        {
+            return new HexCellPosition<Tc>(math, coordinate);
         }
     }
 }

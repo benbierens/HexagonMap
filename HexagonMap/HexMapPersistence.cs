@@ -27,9 +27,10 @@
 
         public TuserCell? Read(IHexCellPosition<Tc> position)
         {
-            if (!cells.ContainsKey(position.X)) return null;
-            var dim = cells[position.X];
-            if (dim.TryGetValue(position.Y, out var cell))
+            var c = position.Coordinate;
+            if (!cells.ContainsKey(c.X)) return null;
+            var dim = cells[c.X];
+            if (dim.TryGetValue(c.Y, out var cell))
             {
                 return cell;
             }
@@ -38,9 +39,9 @@
 
         public void Write(TuserCell cell)
         {
-            var p = cell.HexCell.Position;
-            if (!cells.ContainsKey(p.X)) cells.Add(p.X, new Dictionary<Tc, TuserCell>());
-            cells[p.X][p.Y] = cell;
+            var c = cell.HexCell.Position.Coordinate;
+            if (!cells.ContainsKey(c.X)) cells.Add(c.X, new Dictionary<Tc, TuserCell>());
+            cells[c.X][c.Y] = cell;
         }
     }
 }
