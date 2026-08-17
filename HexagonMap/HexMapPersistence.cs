@@ -1,20 +1,18 @@
 ﻿namespace HexagonMap
 {
-    public interface IHexMapPersistence<TuserCell>
-        where TuserCell : class, IHasHexCell
+    public interface IHexMapPersistence
     {
         void Open();
         void Close();
 
-        TuserCell? Read(HexMapCoordinate coordinate);
-        void Write(TuserCell cell);
+        IHexCell? Read(HexMapCoordinate coordinate);
+        void Write(IHexCell cell);
         void Delete(HexMapCoordinate coordinate);
     }
 
-    public class InMemoryHexMapPersistence<TuserCell> : IHexMapPersistence<TuserCell>
-        where TuserCell : class, IHasHexCell
+    public class InMemoryHexMapPersistence : IHexMapPersistence
     {
-        private readonly Dictionary<int, Dictionary<int, TuserCell>> cells = new();
+        private readonly Dictionary<int, Dictionary<int, IHexCell>> cells = new();
 
         public void Open()
         {
@@ -24,7 +22,7 @@
         {
         }
 
-        public TuserCell? Read(HexMapCoordinate c)
+        public IHexCell? Read(HexMapCoordinate c)
         {
             if (!cells.ContainsKey(c.X)) return null;
             var dim = cells[c.X];
@@ -35,10 +33,10 @@
             return null;
         }
 
-        public void Write(TuserCell cell)
+        public void Write(IHexCell cell)
         {
-            var c = cell.HexCell.Coordinate;
-            if (!cells.ContainsKey(c.X)) cells.Add(c.X, new Dictionary<int, TuserCell>());
+            var c = cell.Coordinate;
+            if (!cells.ContainsKey(c.X)) cells.Add(c.X, new Dictionary<int, IHexCell>());
             cells[c.X][c.Y] = cell;
         }
 

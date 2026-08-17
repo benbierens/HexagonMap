@@ -1,4 +1,7 @@
-﻿using NUnit.Framework;
+﻿using HexagonMap;
+using HexagonMapTests.Utils;
+using Moq;
+using NUnit.Framework;
 
 namespace HexagonMapTests
 {
@@ -8,19 +11,25 @@ namespace HexagonMapTests
         [Test]
         public void CanCreateTestCell()
         {
-            var cell = Map.CreateCell(0, 0, new TestCreateContext());
+            var cell = Map.GetCell(0, 0);
 
             Assert.That(cell, Is.Not.Null);
+
+            Persistence.Verify(p => p.Read(It.IsAny<HexMapCoordinate>()), Times.Once());
+            Persistence.Verify(p => p.Write(cell), Times.Once());
         }
 
         [Test]
         public void KeepsCreatedCell()
         {
-            Map.CreateCell(0, 0, new TestCreateContext());
+            Map.GetCell(0, 0);
 
             var cell = Map.GetCell(0, 0);
 
             Assert.That(cell, Is.Not.Null);
+
+            Persistence.Verify(p => p.Read(It.IsAny<HexMapCoordinate>()), Times.Exactly(2));
+            Persistence.Verify(p => p.Write(cell), Times.Once());
         }
 
         [Test]
@@ -30,25 +39,10 @@ namespace HexagonMapTests
             [Values(-3, -1, 0, 1, 5)] int y
         )
         {
-            var cell = Map.CreateCell(x, y, new TestCreateContext());
+            var cell = Map.GetCell(x, y);
 
-            Assert.That(cell.HexCell.Coordinate.X, Is.EqualTo(x));
-            Assert.That(cell.HexCell.Coordinate.Y, Is.EqualTo(y));
-        }
-
-        [Test]
-        public void CellHasUserData()
-        {
-            var context = new TestCreateContext
-            {
-                NewCellTestData = Guid.NewGuid().ToString()
-            };
-
-            var cell = Map.CreateCell(0, 0, context);
-            Assert.That(cell.TestData, Is.EqualTo(context.NewCellTestData));
-
-            var getCell = Map.GetCell(0, 0)!;
-            Assert.That(getCell.TestData, Is.EqualTo(context.NewCellTestData));
+            Assert.That(cell.Coordinate.X, Is.EqualTo(x));
+            Assert.That(cell.Coordinate.Y, Is.EqualTo(y));
         }
     }
 }
