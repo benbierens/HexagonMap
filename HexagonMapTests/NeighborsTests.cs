@@ -5,22 +5,8 @@ using NUnit.Framework;
 namespace HexagonMapTests
 {
     [TestFixture]
-    public class NeighborsTests : BaseTest
+    public class NeighborsTests : CellBaseTest
     {
-        private IHexCell cell = null!;
-
-        [SetUp]
-        public void Setup()
-        {
-            cell = Map.GetCell(0, 0);
-        }
-
-        [TearDown]
-        public void Teardown()
-        {
-            cell = null!;
-        }
-
         [Test]
         [Combinatorial]
         public void LineSanityCheck(
@@ -29,7 +15,7 @@ namespace HexagonMapTests
         )
         {
             Direction direction = d;
-            var here = cell;
+            var here = Cell;
 
             // We take 'steps' steps in direction 'direction'.
             for (var i = 0; i < steps; i++)
@@ -44,7 +30,7 @@ namespace HexagonMapTests
                 here = here.Neighbors[back].GetCell();
             }
 
-            Assert.That(here, Is.SameAs(cell));
+            Assert.That(here, Is.SameAs(Cell));
         }
 
         [Test]
@@ -53,13 +39,13 @@ namespace HexagonMapTests
             [Values(0, 1, 2, 3, 4, 5)] int offset
         )
         {
-            var here = cell;
+            var here = Cell;
             for (var i = 0; i < 6; i++)
             {
                 var direction = new Direction((i + offset) % 6);
                 here = here.Neighbors[direction].GetCell();
             }
-            Assert.That(here, Is.SameAs(cell));
+            Assert.That(here, Is.SameAs(Cell));
         }
     }
 }

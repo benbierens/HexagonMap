@@ -31,6 +31,8 @@
         }
 
         public Direction Reverse => reverses[this];
+        public Direction Clockwise => (value + 1) % 6;
+        public Direction CounterClockwise => WrapMod(value - 1, 6);
 
         public static implicit operator Direction(byte value) { return new Direction(value); }
         public static implicit operator Direction(int value) { return new Direction(value); }
@@ -82,6 +84,12 @@
         public override int GetHashCode()
         {
             return EqualityComparer<byte>.Default.GetHashCode(value);
+        }
+
+        private int WrapMod(int x, int m)
+        {
+            var r = x % m;
+            return r < 0 ? r + m : r;
         }
     }
 }
