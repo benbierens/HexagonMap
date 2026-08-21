@@ -10,10 +10,11 @@ namespace HexagonMapTests
         [Test]
         [Combinatorial]
         public void DistancesOfOne(
+            [Values(0, 1)] int s,
             [Values(0, 1, 2, 3, 4, 5)] int d
         )
         {
-            var fix = Map.GetCell(0, 0);
+            var fix = Map.GetCell(s, s);
             Direction direction = d;
             var target = fix.Neighbors[direction].GetCell();
             var distance = fix.GetDistance(target);

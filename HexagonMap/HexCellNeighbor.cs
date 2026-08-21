@@ -7,21 +7,23 @@
 
     public interface IHexCellNeighbor
     {
+        HexMapCoordinate Coordinate { get; }
         IHexCellNeighbor this[Direction direction] { get; }
         IHexCell GetCell();
     }
 
     internal class HexCellNeighbor : IHexCellNeighbor
     {
-        private readonly HexMapCoordinate coordinate;
         private readonly IHexMap map;
         private IHexCellNeighbor[] neighbors = null!;
 
         public HexCellNeighbor(IHexMap map, HexMapCoordinate coordinate)
         {
-            this.coordinate = coordinate;
+            this.Coordinate = coordinate;
             this.map = map;
         }
+
+        public HexMapCoordinate Coordinate { get; }
 
         public IHexCellNeighbor this[Direction direction]
         {
@@ -34,12 +36,12 @@
 
         public IHexCell GetCell()
         {
-            return map.GetCell(coordinate);
+            return map.GetCell(Coordinate);
         }
 
         private IHexCellNeighbor[] PopulateNeighbors()
         {
-            var c = coordinate;
+            var c = Coordinate;
             if (c.IsShifted)
             {
                 return

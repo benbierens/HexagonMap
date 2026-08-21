@@ -8,6 +8,36 @@ namespace HexagonMapTests
     public class NeighborsTests : CellBaseTest
     {
         [Test]
+        [TestCase(0, -1, -1)]
+        [TestCase(1, 0, -1)]
+        [TestCase(2, 1, 0)]
+        [TestCase(3, 0, 1)]
+        [TestCase(4, -1, 1)]
+        [TestCase(5, -1, 0)]
+        public void OriginDirections(int direction, int x, int y)
+        {
+            var here = Map.GetCell(0, 0);
+            
+            var step = here.Neighbors[direction];
+            Assert.That(step.Coordinate, Is.EqualTo((x, y)));
+        }
+
+        [Test]
+        [TestCase(0, 1, 0)]
+        [TestCase(1, 2, 0)]
+        [TestCase(2, 2, 1)]
+        [TestCase(3, 2, 2)]
+        [TestCase(4, 1, 2)]
+        [TestCase(5, 0, 1)]
+        public void ShiftDirections(int direction, int x, int y)
+        {
+            var here = Map.GetCell(1, 1);
+
+            var step = here.Neighbors[direction];
+            Assert.That(step.Coordinate, Is.EqualTo((x, y)));
+        }
+
+        [Test]
         [Combinatorial]
         public void LineSanityCheck(
             [Values(0, 1, 2, 3, 4, 5)] int d,
