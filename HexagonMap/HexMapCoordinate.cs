@@ -2,6 +2,8 @@
 {
     public class HexMapCoordinate : IEquatable<HexMapCoordinate?>
     {
+        private HexMapCubicCoordinate? cubicCoordinate = null;
+
         public HexMapCoordinate(int x, int y)
         {
             X = x;
@@ -13,6 +15,15 @@
         public int Y { get; }
         internal bool IsShifted { get; }
 
+        public HexMapCubicCoordinate AsCubic
+        {
+            get
+            {
+                if (cubicCoordinate == null) cubicCoordinate = new HexMapCubicCoordinate(this);
+                return cubicCoordinate;
+            }
+        }
+
         public int GetDistance(HexMapCoordinate target)
         {
             return GetDistance(new DoNothingLog(), target);
@@ -20,27 +31,17 @@
 
         public int GetDistance(ILog log, HexMapCoordinate target)
         {
-            var dX = target.X - X;
-            var dY = target.Y - Y;
-            var absDx = Math.Abs(dX);
-            var absDy = Math.Abs(dY);
+            var thisCube = AsCubic;
+            var targetCube = target.AsCubic;
+            
+            var dx = Math.Abs(thisCube.X - targetCube.X);
+            var dy = Math.Abs(thisCube.Y - targetCube.Y);
+            var dz = Math.Abs(thisCube.Z - targetCube.Z);
 
-            var gridwiseDistance = absDx + absDy;
-            double smallestComponent = Math.Min(absDx, absDy);
-            double largestComponent = Math.Max(absDx, absDy);
-            var smallDiscount = Convert.ToInt32(Math.Min(smallestComponent, Math.Ceiling(smallestComponent / 2.0)));
-            var largeDiscount = Convert.ToInt32(Math.Min(smallestComponent, Math.Ceiling(largestComponent / 2.0)));
+            var distance = (dx + dy + dz) / 2;
+            log.Write($"thisCube:{thisCube} - targetCube: {targetCube} - distance = {distance}");
 
-            var selector = (dX > 0 && dY > 0) || (dX < 0 && dY < 0);
-            var selectedDiscount = largeDiscount;
-
-            log.Write($"distance calculation: {this} => {target}");
-            log.Write($"gridwise: {gridwiseDistance} - smallest component: {smallestComponent}");
-            log.Write($"smalldiscount: {smallDiscount}");
-            log.Write($"largediscount: {largeDiscount}");
-            log.Write($"select: {selector} -> discount: {selectedDiscount}");
-
-            return gridwiseDistance - selectedDiscount;
+            return distance;
         }
 
         public override string ToString()
@@ -93,5 +94,26 @@
         }
 
         #endregion
+    }
+
+    public class HexMapCubicCoordinate
+    {
+        public HexMapCubicCoordinate(HexMapCoordinate coordinate)
+        {
+            var axialQ = coordinate.X - ((coordinate.Y - (coordinate.Y & 1)) / 2);
+
+            X = axialQ;
+            Z = coordinate.Y;
+            Y = -X - Z;
+        }
+
+        public int X { get; }
+        public int Y { get; }
+        public int Z { get; }
+
+        public override string ToString()
+        {
+            return $"[{X},{Y},{Z}]";
+        }
     }
 }

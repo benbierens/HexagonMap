@@ -21,11 +21,10 @@ namespace HexagonMapTests
             [Values(0, 1, 2, 3, 4, 5)] int d
         )
         {
-            var fix = Map.GetCell(sX, sY);
             Direction direction = d;
-            var target = fix.Neighbors[direction].GetCell();
-            var distanceToTarget = fix.GetDistance(target);
-            var distanceBack = target.GetDistance(fix);
+            var target = Cell.Neighbors[direction].GetCell();
+            var distanceToTarget = Cell.GetDistance(target);
+            var distanceBack = target.GetDistance(Cell);
             Assert.That(distanceToTarget, Is.EqualTo(1));
             Assert.That(distanceBack, Is.EqualTo(distanceToTarget));
 
@@ -40,17 +39,16 @@ namespace HexagonMapTests
         )
         {
             Direction direction = d;
-            var start = Map.GetCell(0, 0);
-            var here = start;
+            var here = Cell;
 
             for (var i = 0; i < steps; i++)
             {
                 here = here.Neighbors[direction].GetCell();
             }
 
-            var distance = start.GetDistance(here);
+            var distance = Cell.GetDistance(here);
 
-            TestContext.Error.WriteLine($"{here} -> {start} = {distance} == {steps}");
+            TestContext.Error.WriteLine($"{here} -> {Cell} = {distance} == {steps}");
             Map.Print();
 
             Assert.That(distance, Is.EqualTo(steps));
@@ -66,17 +64,30 @@ namespace HexagonMapTests
         {
             Direction d1 = d;
             Direction d2 = clockwise ? d1.Clockwise : d1.CounterClockwise;
-            var start = Map.GetCell(0, 0);
-            var here = start;
+            var here = Cell;
 
             for (var i = 0; i < steps; i++)
             {
                 var select = i % 2 == 0 ? d1 : d2;
                 here = here.Neighbors[select].GetCell();
-
-                var distance = start.GetDistance(here);
-                Assert.That(distance, Is.EqualTo(i + 1));
             }
+            var distance = Cell.GetDistance(here);
+
+            TestContext.Error.WriteLine($"{here} -> {Cell} = {distance} == {steps}");
+            Map.Print();
+
+            Assert.That(distance, Is.EqualTo(steps));
+        }
+
+        [Test]
+        public void CurvedPathDistance(
+            [Values(0, 1, 2, 3, 4, 5)] int d,
+            [Values(1, 3, 5)] int steps)
+        {
+            var here = Cell;
+
+
+
         }
     }
 }

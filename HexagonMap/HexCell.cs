@@ -3,6 +3,7 @@
     public interface IHexCell : IHasNeighbors
     {
         HexMapCoordinate Coordinate { get; }
+        //IHexCell TakeSteps(int numSteps, Direction direction);
         int GetDistance(IHexCell target);
     }
 
@@ -24,7 +25,14 @@
 
         public HexMapCoordinate Coordinate { get; }
         public IHexCellNeighbor Neighbors { get; }
-        
+
+        //public IHexCell TakeSteps(int numSteps, Direction direction)
+        //{
+        //    var c = Neighbors;
+        //    for (var i = 0; i < numSteps; i++) c =
+        //}
+
+
         public int GetDistance(IHexCell target)
         {
             return Coordinate.GetDistance(log, target.Coordinate);
