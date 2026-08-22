@@ -45,5 +45,10 @@
             if (!cells.ContainsKey(c.X)) return;
             cells[c.X].Remove(c.Y);
         }
+
+        public void Iterate(Action<IHexCell> onCell)
+        {
+            foreach (var map in cells) foreach (var cell in map.Value) onCell(cell.Value);
+        }
     }
 }

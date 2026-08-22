@@ -15,14 +15,32 @@
 
         public int GetDistance(HexMapCoordinate target)
         {
-            var dX = Math.Abs(target.X - X);
-            var dY= Math.Abs(target.Y - Y);
+            return GetDistance(new DoNothingLog(), target);
+        }
 
-            var gridwiseDistance = dX + dY;
-            double smallestComponent = Math.Min(dX, dX);
-            var diagonalsDiscount = Math.Min(dY, Convert.ToInt32(Math.Ceiling(smallestComponent / 2.0)));
+        public int GetDistance(ILog log, HexMapCoordinate target)
+        {
+            var dX = target.X - X;
+            var dY = target.Y - Y;
+            var absDx = Math.Abs(dX);
+            var absDy = Math.Abs(dY);
 
-            return gridwiseDistance - diagonalsDiscount;
+            var gridwiseDistance = absDx + absDy;
+            double smallestComponent = Math.Min(absDx, absDy);
+            double largestComponent = Math.Max(absDx, absDy);
+            var smallDiscount = Convert.ToInt32(Math.Min(smallestComponent, Math.Ceiling(smallestComponent / 2.0)));
+            var largeDiscount = Convert.ToInt32(Math.Min(smallestComponent, Math.Ceiling(largestComponent / 2.0)));
+
+            var selector = (dX > 0 && dY > 0) || (dX < 0 && dY < 0);
+            var selectedDiscount = largeDiscount;
+
+            log.Write($"distance calculation: {this} => {target}");
+            log.Write($"gridwise: {gridwiseDistance} - smallest component: {smallestComponent}");
+            log.Write($"smalldiscount: {smallDiscount}");
+            log.Write($"largediscount: {largeDiscount}");
+            log.Write($"select: {selector} -> discount: {selectedDiscount}");
+
+            return gridwiseDistance - selectedDiscount;
         }
 
         public override string ToString()

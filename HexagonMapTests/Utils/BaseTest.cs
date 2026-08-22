@@ -29,7 +29,7 @@ namespace HexagonMapTests.Utils
                 MapData.Write(c);
             }));
 
-            Map = new HexMap(Persistence.Object);
+            Map = new HexMap(new TestContextErrLog(), MapData);
         }
 
         [TearDown]
@@ -38,6 +38,14 @@ namespace HexagonMapTests.Utils
             Map = null!;
             Persistence = null!;
             MapData = null!;
+        }
+    }
+
+    public class TestContextErrLog : ILog
+    {
+        public void Write(string line)
+        {
+            TestContext.Error.WriteLine(line);
         }
     }
 }
