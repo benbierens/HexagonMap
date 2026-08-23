@@ -27,8 +27,6 @@ namespace HexagonMapTests
             var distanceBack = target.GetDistance(Cell);
             Assert.That(distanceToTarget, Is.EqualTo(1));
             Assert.That(distanceBack, Is.EqualTo(distanceToTarget));
-
-            Map.Print();
         }
 
         [Test]
@@ -47,10 +45,6 @@ namespace HexagonMapTests
             }
 
             var distance = Cell.GetDistance(here);
-
-            TestContext.Error.WriteLine($"{here} -> {Cell} = {distance} == {steps}");
-            Map.Print();
-
             Assert.That(distance, Is.EqualTo(steps));
         }
 
@@ -73,9 +67,6 @@ namespace HexagonMapTests
             }
             var distance = Cell.GetDistance(here);
 
-            TestContext.Error.WriteLine($"{here} -> {Cell} = {distance} == {steps}");
-            Map.Print();
-
             Assert.That(distance, Is.EqualTo(steps));
         }
 
@@ -85,9 +76,18 @@ namespace HexagonMapTests
             [Values(1, 3, 5)] int steps)
         {
             var here = Cell;
+            Direction direction = d;
 
+            for (var i = 0; i < steps; i++) here = here.Neighbors[direction].GetCell();
+            direction = direction.Clockwise;
+            for (var i = 0; i < steps; i++) here = here.Neighbors[direction].GetCell();
+            direction = direction.Clockwise;
+            for (var i = 0; i < steps; i++) here = here.Neighbors[direction].GetCell();
 
+            var expectedDistance = 2 * steps;
+            var distance = Cell.GetDistance(here);
 
+            Assert.That(distance, Is.EqualTo(expectedDistance));
         }
     }
 }
