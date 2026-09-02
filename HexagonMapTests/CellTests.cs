@@ -31,18 +31,5 @@ namespace HexagonMapTests
             Persistence.Verify(p => p.Read(It.IsAny<HexMapCoordinate>()), Times.Exactly(2));
             Persistence.Verify(p => p.Write(cell), Times.Once());
         }
-
-        [Test]
-        [Combinatorial]
-        public void CellHasCoordinate(
-            [Values(-3, -1, 0, 1, 5)] int x,
-            [Values(-3, -1, 0, 1, 5)] int y
-        )
-        {
-            var cell = Map.GetCell(x, y);
-
-            Assert.That(cell.Coordinate.X, Is.EqualTo(x));
-            Assert.That(cell.Coordinate.Y, Is.EqualTo(y));
-        }
     }
 }

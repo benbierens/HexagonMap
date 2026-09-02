@@ -42,27 +42,27 @@
         private IHexCellNeighbor[] PopulateNeighbors()
         {
             var c = Coordinate;
-            if (c.IsShifted)
+            if (c.AsRowColumn.IsShifted)
             {
                 return
                 [
-                    new HexCellNeighbor(map, new HexMapCoordinate(c.X, c.Y - 1)),
-                    new HexCellNeighbor(map, new HexMapCoordinate(c.X + 1, c.Y - 1)),
-                    new HexCellNeighbor(map, new HexMapCoordinate(c.X + 1, c.Y)),
-                    new HexCellNeighbor(map, new HexMapCoordinate(c.X + 1, c.Y + 1)),
-                    new HexCellNeighbor(map, new HexMapCoordinate(c.X, c.Y + 1)),
-                    new HexCellNeighbor(map, new HexMapCoordinate(c.X - 1, c.Y))
+                    //new HexCellNeighbor(map, HexMapCoordinate.FromRowColumn(c.X, c.Y - 1)),
+                    //new HexCellNeighbor(map, HexMapCoordinate.FromRowColumn(c.X + 1, c.Y - 1)),
+                    //new HexCellNeighbor(map, HexMapCoordinate.FromRowColumn(c.X + 1, c.Y)),
+                    //new HexCellNeighbor(map, HexMapCoordinate.FromRowColumn(c.X + 1, c.Y + 1)),
+                    //new HexCellNeighbor(map, HexMapCoordinate.FromRowColumn(c.X, c.Y + 1)),
+                    //new HexCellNeighbor(map, HexMapCoordinate.FromRowColumn(c.X - 1, c.Y))
                 ];
             }
 
             return
             [
-                new HexCellNeighbor(map, new HexMapCoordinate(c.X - 1, c.Y - 1)),
-                new HexCellNeighbor(map, new HexMapCoordinate(c.X, c.Y - 1)),
-                new HexCellNeighbor(map, new HexMapCoordinate(c.X + 1, c.Y)),
-                new HexCellNeighbor(map, new HexMapCoordinate(c.X, c.Y + 1)),
-                new HexCellNeighbor(map, new HexMapCoordinate(c.X - 1, c.Y + 1)),
-                new HexCellNeighbor(map, new HexMapCoordinate(c.X - 1, c.Y))
+                //new HexCellNeighbor(map, HexMapCoordinate.FromRowColumn(c.X - 1, c.Y - 1)),
+                //new HexCellNeighbor(map, HexMapCoordinate.FromRowColumn(c.X, c.Y - 1)),
+                //new HexCellNeighbor(map, HexMapCoordinate.FromRowColumn(c.X + 1, c.Y)),
+                //new HexCellNeighbor(map, HexMapCoordinate.FromRowColumn(c.X, c.Y + 1)),
+                //new HexCellNeighbor(map, HexMapCoordinate.FromRowColumn(c.X - 1, c.Y + 1)),
+                //new HexCellNeighbor(map, HexMapCoordinate.FromRowColumn(c.X - 1, c.Y))
             ];
         }
     }

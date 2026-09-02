@@ -19,7 +19,7 @@
 
         public IHexCell GetCell(int x, int y)
         {
-            return GetCell(new HexMapCoordinate(x, y));
+            return GetCell(HexMapCoordinate.FromRowColumn(x, y));
         }
 
         public IHexCell GetCell(HexMapCoordinate c)
@@ -34,7 +34,7 @@
 
         public void DeleteCell(int x, int y)
         {
-            DeleteCell(new HexMapCoordinate(x, y));
+            DeleteCell(HexMapCoordinate.FromRowColumn(x, y));
         }
 
         public void DeleteCell(HexMapCoordinate coordinate)
@@ -51,22 +51,22 @@
                 coords.Add(cell.Coordinate);
             });
 
-            var xMin = coords.Min(c => c.X);
-            var xMax = coords.Max(c => c.X);
-            var yMin = coords.Min(c => c.Y);
-            var yMax = coords.Max(c => c.Y);
+            var colMin = coords.Min(c => c.AsRowColumn.Column);
+            var colMax = coords.Max(c => c.AsRowColumn.Column);
+            var rowMin = coords.Min(c => c.AsRowColumn.Row);
+            var rowMax = coords.Max(c => c.AsRowColumn.Row);
 
             log.Write(" - ");
-            for (var y = yMin; y <= yMax; y++)
+            for (var row = rowMin; row <= rowMax; row++)
             {
                 var line = "";
-                if (y % 2 != 0) line += "    ";
+                if (row % 2 != 0) line += "    ";
 
-                for (var x = xMin; x <= xMax; x++)
+                for (var col = colMin; col <= colMax; col++)
                 {
-                    var c = coords.SingleOrDefault(a => a.X == x && a.Y == y);
+                    var c = coords.SingleOrDefault(a => a.AsRowColumn.Column == col && a.AsRowColumn.Row == row);
                     if (c == null) line += "(   ,   )";
-                    else           line += $"({ThreeDigit(x)},{ThreeDigit(y)}) ";
+                    else           line += $"({ThreeDigit(col)},{ThreeDigit(row)}) ";
                 }
 
                 log.Write("");

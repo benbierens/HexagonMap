@@ -11,7 +11,7 @@ namespace HexagonMapTests.Utils
         [SetUp]
         public void CellBaseSetup()
         {
-            InitialCoordinate = new HexMapCoordinate(Random.Shared.Next(-10, 10), Random.Shared.Next(-10, 10));
+            InitialCoordinate = HexMapCoordinate.FromRowColumn(Random.Shared.Next(-10, 10), Random.Shared.Next(-10, 10));
             Cell = Map.GetCell(InitialCoordinate);
         }
 

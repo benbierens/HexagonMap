@@ -24,9 +24,9 @@
 
         public IHexCell? Read(HexMapCoordinate c)
         {
-            if (!cells.ContainsKey(c.X)) return null;
-            var dim = cells[c.X];
-            if (dim.TryGetValue(c.Y, out var cell))
+            if (!cells.ContainsKey(c.AsRowColumn.Column)) return null;
+            var dim = cells[c.AsRowColumn.Column];
+            if (dim.TryGetValue(c.AsRowColumn.Row, out var cell))
             {
                 return cell;
             }
@@ -36,14 +36,14 @@
         public void Write(IHexCell cell)
         {
             var c = cell.Coordinate;
-            if (!cells.ContainsKey(c.X)) cells.Add(c.X, new Dictionary<int, IHexCell>());
-            cells[c.X][c.Y] = cell;
+            if (!cells.ContainsKey(c.AsRowColumn.Column)) cells.Add(c.AsRowColumn.Column, new Dictionary<int, IHexCell>());
+            cells[c.AsRowColumn.Column][c.AsRowColumn.Row] = cell;
         }
 
         public void Delete(HexMapCoordinate c)
         {
-            if (!cells.ContainsKey(c.X)) return;
-            cells[c.X].Remove(c.Y);
+            if (!cells.ContainsKey(c.AsRowColumn.Column)) return;
+            cells[c.AsRowColumn.Column].Remove(c.AsRowColumn.Row);
         }
 
         public void Iterate(Action<IHexCell> onCell)

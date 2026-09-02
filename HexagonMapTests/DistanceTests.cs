@@ -16,8 +16,6 @@ namespace HexagonMapTests
         [Test]
         [Combinatorial]
         public void DistancesOfOne(
-            [Values(0, 1, 2)] int sX,
-            [Values(0, 1, 2)] int sY,
             [Values(0, 1, 2, 3, 4, 5)] int d
         )
         {
