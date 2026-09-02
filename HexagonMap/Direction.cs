@@ -11,6 +11,16 @@
             { 4, 1 },
             { 5, 2 },
         };
+        private static readonly Dictionary<Direction, (int, int)> cubicTransforms = new()
+        {
+            { 0, (0, -1) },
+            { 1, (1, -1) },
+            { 2, (1, 0) },
+            { 3, (0, 1) },
+            { 4, (-1, 1) },
+            { 5, (-1, 0) },
+        };
+
         private readonly byte value;
 
         public Direction(int value)
@@ -23,6 +33,12 @@
             if (value > 5) throw new Exception($"Directional value '{value}' is out of range.");
 
             this.value = value;
+        }
+
+        internal HexMapCubicCoordinate TransformCubic(HexMapCubicCoordinate cubic)
+        {
+            var transform = cubicTransforms[this];
+            return new HexMapCubicCoordinate(cubic.Q + transform.Item1, cubic.R + transform.Item2);
         }
 
         public override string ToString()

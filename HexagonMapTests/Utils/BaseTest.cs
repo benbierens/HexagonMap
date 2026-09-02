@@ -8,7 +8,7 @@ namespace HexagonMapTests.Utils
     {
         protected Mock<IHexMapPersistence> Persistence { get; private set; } = null!;
         protected InMemoryHexMapPersistence MapData { get; private set; } = null!;
-        protected HexMap Map { get; private set; } = null!;
+        protected IHexMap Map { get; private set; } = null!;
 
         [SetUp]
         public void SetupBase()
@@ -19,7 +19,7 @@ namespace HexagonMapTests.Utils
             Persistence.Setup(f => f.Open()).Callback(() => MapData.Open());
             Persistence.Setup(f => f.Close()).Callback(() => MapData.Close());
             
-            Persistence.Setup(f => f.Read(It.IsAny<HexMapCoordinate>())).Returns(new Func<HexMapCoordinate, IHexCell?>(c =>
+            Persistence.Setup(f => f.Read(It.IsAny<HexMapCubicCoordinate>())).Returns(new Func<HexMapCubicCoordinate, IHexCell?>(c =>
             {
                 return MapData.Read(c);
             }));
@@ -28,13 +28,22 @@ namespace HexagonMapTests.Utils
             {
                 MapData.Write(c);
             }));
+            Persistence.Setup(f => f.Iterate(It.IsAny<Action<IHexCell>>())).Callback(new Action<Action<IHexCell>>(c =>
+            {
+                MapData.Iterate(c);
+            }));
 
-            Map = new HexMap(new TestContextErrLog(), MapData);
+            Map = new HexMap(new TestContextErrLog(), Persistence.Object);
         }
 
         [TearDown]
         public void TeardownBase()
         {
+            if (TestContext.CurrentContext.Result.FailCount > 0)
+            {
+                ((HexMap)Map).Print();
+            }
+
             Map = null!;
             Persistence = null!;
             MapData = null!;

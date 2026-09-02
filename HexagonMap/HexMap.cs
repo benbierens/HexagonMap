@@ -2,8 +2,8 @@
 {
     public interface IHexMap
     {
-        IHexCell GetCell(int x, int y);
-        IHexCell GetCell(HexMapCoordinate coordinate);
+        IHexCell FromRowColumn(int x, int y);
+        IHexCell FromCubic(int q, int r);
     }
 
     public class HexMap : IHexMap
@@ -17,12 +17,17 @@
             this.persistence = persistence;
         }
 
-        public IHexCell GetCell(int x, int y)
+        public IHexCell FromRowColumn(int row, int column)
         {
-            return GetCell(HexMapCoordinate.FromRowColumn(x, y));
+            return GetCell(HexMapCubicCoordinate.FromRowColumn(row, column));
         }
 
-        public IHexCell GetCell(HexMapCoordinate c)
+        public IHexCell FromCubic(int q, int r)
+        {
+            return GetCell(new HexMapCubicCoordinate(q, r));
+        }
+
+        internal IHexCell GetCell(HexMapCubicCoordinate c)
         {
             var cell = persistence.Read(c);
             if (cell != null) return cell;
@@ -32,29 +37,25 @@
             return cell;
         }
 
-        public void DeleteCell(int x, int y)
+        public void DeleteCellByRowColumn(int row, int column)
         {
-            DeleteCell(HexMapCoordinate.FromRowColumn(x, y));
+            persistence.Delete(HexMapCubicCoordinate.FromRowColumn(row, column));
         }
 
-        public void DeleteCell(HexMapCoordinate coordinate)
+        public void DeleteCellByCubic(int q, int r)
         {
-            persistence.Delete(coordinate);
+            persistence.Delete(new HexMapCubicCoordinate(q, r));
         }
 
         public void Print()
         {
-            var coords = new List<HexMapCoordinate>();
+            var cells = new List<IHexCell>();
+            persistence.Iterate(cells.Add);
 
-            ((InMemoryHexMapPersistence)persistence).Iterate(cell =>
-            {
-                coords.Add(cell.Coordinate);
-            });
-
-            var colMin = coords.Min(c => c.AsRowColumn.Column);
-            var colMax = coords.Max(c => c.AsRowColumn.Column);
-            var rowMin = coords.Min(c => c.AsRowColumn.Row);
-            var rowMax = coords.Max(c => c.AsRowColumn.Row);
+            var colMin = cells.Min(c => c.AsRowColumn.Column);
+            var colMax = cells.Max(c => c.AsRowColumn.Column);
+            var rowMin = cells.Min(c => c.AsRowColumn.Row);
+            var rowMax = cells.Max(c => c.AsRowColumn.Row);
 
             log.Write(" - ");
             for (var row = rowMin; row <= rowMax; row++)
@@ -64,7 +65,7 @@
 
                 for (var col = colMin; col <= colMax; col++)
                 {
-                    var c = coords.SingleOrDefault(a => a.AsRowColumn.Column == col && a.AsRowColumn.Row == row);
+                    var c = cells.SingleOrDefault(a => a.AsRowColumn.Column == col && a.AsRowColumn.Row == row);
                     if (c == null) line += "(   ,   )";
                     else           line += $"({ThreeDigit(col)},{ThreeDigit(row)}) ";
                 }

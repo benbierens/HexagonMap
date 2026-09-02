@@ -9,32 +9,38 @@ namespace HexagonMapTests
     {
         [Test]
         [TestCase(0, -1, -1)]
-        [TestCase(1, 0, -1)]
-        [TestCase(2, 1, 0)]
-        [TestCase(3, 0, 1)]
-        [TestCase(4, -1, 1)]
-        [TestCase(5, -1, 0)]
-        public void OriginDirections(int direction, int x, int y)
+        [TestCase(1, -1, 0)]
+        [TestCase(2, 0, 1)]
+        [TestCase(3, 1, 0)]
+        [TestCase(4, 1, -1)]
+        [TestCase(5, 0, -1)]
+        public void OriginDirections(int direction, int row, int column)
         {
-            var here = Map.GetCell(0, 0);
+            var here = Map.FromRowColumn(0, 0);
 
-            var step = here.Neighbors[direction];
-            Assert.That(step.Coordinate, Is.EqualTo((x, y)));
+            var step = here.GetNeighbor(direction);
+
+            var rowColumn = step.AsRowColumn;
+            Assert.That(rowColumn.Row, Is.EqualTo(row));
+            Assert.That(rowColumn.Column, Is.EqualTo(column));
         }
 
         [Test]
-        [TestCase(0, 1, 0)]
-        [TestCase(1, 2, 0)]
-        [TestCase(2, 2, 1)]
+        [TestCase(0, 0, 1)]
+        [TestCase(1, 0, 2)]
+        [TestCase(2, 1, 2)]
         [TestCase(3, 2, 2)]
-        [TestCase(4, 1, 2)]
-        [TestCase(5, 0, 1)]
-        public void ShiftDirections(int direction, int x, int y)
+        [TestCase(4, 2, 1)]
+        [TestCase(5, 1, 0)]
+        public void ShiftDirections(int direction, int row, int column)
         {
-            var here = Map.GetCell(1, 1);
+            var here = Map.FromRowColumn(1, 1);
 
-            var step = here.Neighbors[direction];
-            Assert.That(step.Coordinate, Is.EqualTo((x, y)));
+            var step = here.GetNeighbor(direction);
+
+            var rowColumn = step.AsRowColumn;
+            Assert.That(rowColumn.Row, Is.EqualTo(row));
+            Assert.That(rowColumn.Column, Is.EqualTo(column));
         }
 
         [Test]
@@ -50,17 +56,18 @@ namespace HexagonMapTests
             // We take 'steps' steps in direction 'direction'.
             for (var i = 0; i < steps; i++)
             {
-                here = here.Neighbors[direction].GetCell();
+                here = here.GetNeighbor(direction);
             }
 
             var back = direction.Reverse;
             // We take 'steps' steps back.
             for (var i = 0; i < steps; i++)
             {
-                here = here.Neighbors[back].GetCell();
+                here = here.GetNeighbor(back);
             }
 
             Assert.That(here, Is.SameAs(Cell));
+            Assert.Fail();
         }
 
         [Test]
@@ -73,7 +80,7 @@ namespace HexagonMapTests
             for (var i = 0; i < 6; i++)
             {
                 var direction = new Direction((i + offset) % 6);
-                here = here.Neighbors[direction].GetCell();
+                here = here.GetNeighbor(direction);
             }
             Assert.That(here, Is.SameAs(Cell));
         }

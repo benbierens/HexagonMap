@@ -5,9 +5,10 @@
         void Open();
         void Close();
 
-        IHexCell? Read(HexMapCoordinate coordinate);
+        IHexCell? Read(HexMapCubicCoordinate coordinate);
         void Write(IHexCell cell);
-        void Delete(HexMapCoordinate coordinate);
+        void Delete(HexMapCubicCoordinate coordinate);
+        void Iterate(Action<IHexCell> onCell);
     }
 
     public class InMemoryHexMapPersistence : IHexMapPersistence
@@ -22,11 +23,11 @@
         {
         }
 
-        public IHexCell? Read(HexMapCoordinate c)
+        public IHexCell? Read(HexMapCubicCoordinate c)
         {
-            if (!cells.ContainsKey(c.AsRowColumn.Column)) return null;
-            var dim = cells[c.AsRowColumn.Column];
-            if (dim.TryGetValue(c.AsRowColumn.Row, out var cell))
+            if (!cells.ContainsKey(c.Q)) return null;
+            var dim = cells[c.Q];
+            if (dim.TryGetValue(c.R, out var cell))
             {
                 return cell;
             }
@@ -35,15 +36,15 @@
 
         public void Write(IHexCell cell)
         {
-            var c = cell.Coordinate;
-            if (!cells.ContainsKey(c.AsRowColumn.Column)) cells.Add(c.AsRowColumn.Column, new Dictionary<int, IHexCell>());
-            cells[c.AsRowColumn.Column][c.AsRowColumn.Row] = cell;
+            var c = cell.AsCubic;
+            if (!cells.ContainsKey(c.Q)) cells.Add(c.Q, new Dictionary<int, IHexCell>());
+            cells[c.Q][c.R] = cell;
         }
 
-        public void Delete(HexMapCoordinate c)
+        public void Delete(HexMapCubicCoordinate c)
         {
-            if (!cells.ContainsKey(c.AsRowColumn.Column)) return;
-            cells[c.AsRowColumn.Column].Remove(c.AsRowColumn.Row);
+            if (!cells.ContainsKey(c.Q)) return;
+            cells[c.Q].Remove(c.R);
         }
 
         public void Iterate(Action<IHexCell> onCell)

@@ -10,7 +10,7 @@ namespace HexagonMapTests
         [Test]
         public void ZeroDistance()
         {
-            Assert.That(InitialCoordinate.GetDistance(new TestContextErrLog(), InitialCoordinate), Is.EqualTo(0));
+            Assert.That(Cell.GetDistance(Cell), Is.EqualTo(0));
         }
 
         [Test]
@@ -20,7 +20,7 @@ namespace HexagonMapTests
         )
         {
             Direction direction = d;
-            var target = Cell.Neighbors[direction].GetCell();
+            var target = Cell.GetNeighbor(direction);
             var distanceToTarget = Cell.GetDistance(target);
             var distanceBack = target.GetDistance(Cell);
             Assert.That(distanceToTarget, Is.EqualTo(1));
@@ -39,7 +39,7 @@ namespace HexagonMapTests
 
             for (var i = 0; i < steps; i++)
             {
-                here = here.Neighbors[direction].GetCell();
+                here = here.GetNeighbor(direction);
             }
 
             var distance = Cell.GetDistance(here);
@@ -61,7 +61,7 @@ namespace HexagonMapTests
             for (var i = 0; i < steps; i++)
             {
                 var select = i % 2 == 0 ? d1 : d2;
-                here = here.Neighbors[select].GetCell();
+                here = here.GetNeighbor(select);
             }
             var distance = Cell.GetDistance(here);
 
@@ -76,11 +76,11 @@ namespace HexagonMapTests
             var here = Cell;
             Direction direction = d;
 
-            for (var i = 0; i < steps; i++) here = here.Neighbors[direction].GetCell();
+            for (var i = 0; i < steps; i++) here = here.GetNeighbor(direction);
             direction = direction.Clockwise;
-            for (var i = 0; i < steps; i++) here = here.Neighbors[direction].GetCell();
+            for (var i = 0; i < steps; i++) here = here.GetNeighbor(direction);
             direction = direction.Clockwise;
-            for (var i = 0; i < steps; i++) here = here.Neighbors[direction].GetCell();
+            for (var i = 0; i < steps; i++) here = here.GetNeighbor(direction);
 
             var expectedDistance = 2 * steps;
             var distance = Cell.GetDistance(here);
