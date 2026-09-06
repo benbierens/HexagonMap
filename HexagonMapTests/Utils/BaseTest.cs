@@ -39,10 +39,7 @@ namespace HexagonMapTests.Utils
         [TearDown]
         public void TeardownBase()
         {
-            if (TestContext.CurrentContext.Result.FailCount > 0)
-            {
-                ((HexMap)Map).Print();
-            }
+            ((HexMap)Map).Print();
 
             Map = null!;
             Persistence = null!;

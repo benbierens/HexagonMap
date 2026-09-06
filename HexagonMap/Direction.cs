@@ -35,10 +35,12 @@
             this.value = value;
         }
 
-        internal HexMapCubicCoordinate TransformCubic(HexMapCubicCoordinate cubic)
+        internal HexMapCubicCoordinate TransformCubic(HexMapCubicCoordinate cubic, int steps)
         {
             var transform = cubicTransforms[this];
-            return new HexMapCubicCoordinate(cubic.Q + transform.Item1, cubic.R + transform.Item2);
+            return new HexMapCubicCoordinate(
+                cubic.Q + (transform.Item1 * steps),
+                cubic.R + (transform.Item2 * steps));
         }
 
         public override string ToString()

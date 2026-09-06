@@ -52,10 +52,10 @@
             var cells = new List<IHexCell>();
             persistence.Iterate(cells.Add);
 
-            var colMin = cells.Min(c => c.AsRowColumn.Column);
-            var colMax = cells.Max(c => c.AsRowColumn.Column);
-            var rowMin = cells.Min(c => c.AsRowColumn.Row);
-            var rowMax = cells.Max(c => c.AsRowColumn.Row);
+            var colMin = cells.Min(c => c.AsRowColumn.Column) - 1;
+            var colMax = cells.Max(c => c.AsRowColumn.Column) + 1;
+            var rowMin = cells.Min(c => c.AsRowColumn.Row) - 1;
+            var rowMax = cells.Max(c => c.AsRowColumn.Row) + 1;
 
             log.Write(" - ");
             for (var row = rowMin; row <= rowMax; row++)

@@ -14,15 +14,15 @@ namespace HexagonMapTests
         [TestCase(3, 1, 0)]
         [TestCase(4, 1, -1)]
         [TestCase(5, 0, -1)]
-        public void OriginDirections(int direction, int row, int column)
+        public void OriginDirections(int direction, int expectedRow, int expectedColumn)
         {
             var here = Map.FromRowColumn(0, 0);
 
             var step = here.GetNeighbor(direction);
 
             var rowColumn = step.AsRowColumn;
-            Assert.That(rowColumn.Row, Is.EqualTo(row));
-            Assert.That(rowColumn.Column, Is.EqualTo(column));
+            Assert.That(rowColumn.Row, Is.EqualTo(expectedRow));
+            Assert.That(rowColumn.Column, Is.EqualTo(expectedColumn));
         }
 
         [Test]
@@ -32,15 +32,15 @@ namespace HexagonMapTests
         [TestCase(3, 2, 2)]
         [TestCase(4, 2, 1)]
         [TestCase(5, 1, 0)]
-        public void ShiftDirections(int direction, int row, int column)
+        public void ShiftDirections(int direction, int expectedRow, int expectedColumn)
         {
             var here = Map.FromRowColumn(1, 1);
 
             var step = here.GetNeighbor(direction);
 
             var rowColumn = step.AsRowColumn;
-            Assert.That(rowColumn.Row, Is.EqualTo(row));
-            Assert.That(rowColumn.Column, Is.EqualTo(column));
+            Assert.That(rowColumn.Row, Is.EqualTo(expectedRow));
+            Assert.That(rowColumn.Column, Is.EqualTo(expectedColumn));
         }
 
         [Test]
@@ -67,7 +67,6 @@ namespace HexagonMapTests
             }
 
             Assert.That(here, Is.SameAs(Cell));
-            Assert.Fail();
         }
 
         [Test]
