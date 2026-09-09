@@ -3,7 +3,9 @@
     public interface IHexMap
     {
         IHexCell FromRowColumn(int x, int y);
+        IHexCell FromRowColumn(HexMapRowColumnOffsetCoordinate coordinate);
         IHexCell FromCubic(int q, int r);
+        IHexCell FromCubic(HexMapCubicCoordinate coordinate);
     }
 
     public class HexMap : IHexMap
@@ -22,9 +24,18 @@
             return GetCell(HexMapCubicCoordinate.FromRowColumn(row, column));
         }
 
+        public IHexCell FromRowColumn(HexMapRowColumnOffsetCoordinate coordinate)
+        {
+            return FromRowColumn(coordinate.Row, coordinate.Column);
+        }
+
         public IHexCell FromCubic(int q, int r)
         {
             return GetCell(new HexMapCubicCoordinate(q, r));
+        }
+        public IHexCell FromCubic(HexMapCubicCoordinate coordinate)
+        {
+            return GetCell(coordinate);
         }
 
         internal IHexCell GetCell(HexMapCubicCoordinate c)

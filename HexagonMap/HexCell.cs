@@ -8,6 +8,7 @@
         int GetDistance(IHexCell target);
         IHexCell GetNeighbor(Direction direction);
         IHexCell Jump(Direction direction, int steps);
+        IHexCell[] GetArea(int range);
     }
 
     internal class HexCell : IHexCell
@@ -69,6 +70,11 @@
         public IHexCell Jump(Direction direction, int steps)
         {
             return map.GetCell(direction.TransformCubic(AsCubic, steps));
+        }
+
+        public IHexCell[] GetArea(int range)
+        {
+            return Array.Empty<IHexCell>();
         }
 
         #region Equality
