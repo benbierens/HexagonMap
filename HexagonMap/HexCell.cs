@@ -74,7 +74,23 @@
 
         public IHexCell[] GetArea(int range)
         {
-            return Array.Empty<IHexCell>();
+            var result = new List<IHexCell>();
+
+            RunRange(range, q =>
+            {
+                RunRange(range, r =>
+                {
+                    RunRange(range, s =>
+                    {
+                        if (q + r + s == 0)
+                        {
+                            result.Add(map.FromCubic(q + AsCubic.Q, r + AsCubic.R));
+                        }
+                    });
+                });
+            });
+
+            return result.ToArray();
         }
 
         #region Equality
@@ -112,6 +128,11 @@
         public override string ToString()
         {
             return AsRowColumn.ToString() + AsCubic.ToString();
+        }
+
+        private void RunRange(int range, Action<int> onComponentValue)
+        {
+            for (var c = -range; c <= range; c++) onComponentValue(c);
         }
     }
 }
